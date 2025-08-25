@@ -128,6 +128,31 @@ def delete_user(id):
     db.session.commit()
     return jsonify({"message": f"succefully deleted user {id}"}), 200
 
+@app.route('/pets', methods=['POST'])
+def create_pet():
+    try:
+        pet_data = pet_schema.load(request.json)
+    except ValidationError as e:
+        return jsonify(e.messages), 400
+    
+    new_pet = Pet(name=pet_data['name'], animal=pet_data['animal'])
+    db.session.add(new_pet)
+    db.session.commit()
+
+    return pet_schema.jsonify(new_pet), 201
+
+@app.route('/users/<int:user_id>/add_pet/<int:pet_id>', methods=['GET'])
+def adopt_pet(user_id, pet_id):
+    user = db.session.get(User, user_id)
+    pet = db.session.get(Pet, pet_id)
+
+    user.pets.append(pet)
+    db.session.commit()
+    return jsonify({"message": f"{user.name} adopted the {pet.animal}, {pet.name}!"}), 200
+
+
+
+
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
