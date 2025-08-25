@@ -117,6 +117,17 @@ def update_user(id):
     db.session.commit()
     return user_schema.jsonify(user), 200
 
+@app.route('/users/<int:id>', methods=['DELETE'])
+def delete_user(id):
+    user = db.session.get(User, id)
+
+    if not user:
+        return jsonify({"message": "Invalid user id"}), 400
+    
+    db.session.delete(user)
+    db.session.commit()
+    return jsonify({"message": f"succefully deleted user {id}"}), 200
+
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
