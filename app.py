@@ -99,6 +99,24 @@ def get_user(id):
     user = db.session.get(User, id)
     return user_schema.jsonify(user), 200
 
+@app.route('/users/<int:id>', methods=['PUT'])
+def update_user(id):
+    user = db.session.get(User, id)
+
+    if not user:
+        return jsonify({"message": "Invalid user id"}), 400
+    
+    try:
+        user_data = user_schema.load(request.json)
+    except ValidationError as e:
+        return jsonify(e.messages), 400
+    
+    user.name = user_data['name']
+    user.email = user_data['email']
+
+    db.session.commit()
+    return user_schema.jsonify(user), 200
+
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
