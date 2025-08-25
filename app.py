@@ -94,6 +94,11 @@ def get_users():
 
     return users_schema.jsonify(users), 200
 
+@app.route('/users/<int:id>', methods=['GET'])
+def get_user(id):
+    user = db.session.get(User, id)
+    return user_schema.jsonify(user), 200
+
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
