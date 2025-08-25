@@ -54,6 +54,24 @@ class Pet(Base):
     # One-to-Many relationship, One pet can be related to a List of Users
     owners: Mapped[List["User"]] = relationship("User", secondary=user_pet, back_populates="pets")
 
+# ===================== SCHEMAS ====================
+
+# User Schema
+class UserSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = User
+        
+# Pet Schema
+class PetSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = Pet
+
+# Initialize Schemas
+user_schema = UserSchema()
+users_schema = UserSchema(many=True) #Can serialize many User objects (a list of them)
+pet_schema = PetSchema()
+pets_schema = PetSchema(many=True)
+
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
