@@ -162,6 +162,14 @@ def add_pets(user_id):
 
     return jsonify({"message": "All pets added!"}), 200
 
+# Show user pets
+@app.route("/users/my-pets/<int:user_id>", methods=['GET'])
+def my_pets(user_id):
+    user = db.session.get(User, user_id)
+    if not user:
+        return jsonify({"message": "User not found"}), 404
+
+    return pets_schema.jsonify(user.pets), 200
 
 if __name__ == '__main__':
     with app.app_context():
